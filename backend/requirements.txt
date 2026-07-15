@@ -5,6 +5,3 @@
 azure-functions
 azure-storage-blob
 pandas
-matplotlib
-seaborn
-numpy
