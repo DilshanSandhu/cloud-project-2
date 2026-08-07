@@ -129,7 +129,7 @@
                 }
 
                 // Successful login
-                window.location.href = "/frontend/dashboard.html";
+                window.location.href = "/dashboard.html";
             });
 
         // Google OAuth login
@@ -141,7 +141,7 @@
                     await supabaseClient.auth.signInWithOAuth({
                         provider: "google",
                         options: {
-                            redirectTo: window.location.origin + "/frontend/dashboard.html"
+                            redirectTo: window.location.origin + "/dashboard.html"
                         }
                     });
 
