@@ -1,84 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nutritional Insights</title>
-    <!-- Tailwind CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+    <title>Login - Nutritional Insights</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css"
+        rel="stylesheet"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-100">
+
+<body class="bg-gray-100 min-h-screen">
 
     <header class="bg-blue-600 p-4 text-white">
         <h1 class="text-3xl font-semibold">Nutritional Insights</h1>
     </header>
 
-    <main class="container mx-auto p-6">
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Explore Nutritional Insights</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white p-4 shadow-lg rounded-lg">
-                    <h3 class="font-semibold">Bar Chart</h3>
-                    <p class="text-sm text-gray-600">Average macronutrient content by diet type.</p>
-                    <canvas id="barChart" class="w-full h-48"></canvas>
-                </div>
+    <main class="flex items-center justify-center px-4 py-16">
 
-                <div class="bg-white p-4 shadow-lg rounded-lg">
-                    <h3 class="font-semibold">Scatter Plot</h3>
-                    <p class="text-sm text-gray-600">Nutrient relationships (e.g., protein vs carbs).</p>
-                    <canvas id="scatterPlot" class="w-full h-48"></canvas>
-                </div>
+        <div class="w-full max-w-md bg-white p-6 shadow-lg rounded-lg">
 
-                <div class="bg-white p-4 shadow-lg rounded-lg">
-                    <h3 class="font-semibold">Heatmap</h3>
-                    <p class="text-sm text-gray-600">Nutrient correlations.</p>
-                    <div id="heatmap" class="w-full h-48"></div>
-                </div>
+            <h2 class="text-2xl font-semibold text-center mb-6">Login</h2>
 
-                <div class="bg-white p-4 shadow-lg rounded-lg">
-                    <h3 class="font-semibold">Pie Chart</h3>
-                    <p class="text-sm text-gray-600">Recipe distribution by diet type.</p>
-                    <canvas id="pieChart" class="w-full h-48"></canvas>
-                </div>
-            </div>
-        </section>
+            <input
+                id="loginEmail"
+                type="email"
+                placeholder="Email"
+                class="p-2 border rounded w-full mb-3"
+            >
 
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Filters and Data Interaction</h2>
-            <div class="flex flex-wrap gap-4">
-                <input type="text" placeholder="Search by Diet Type" class="p-2 border rounded w-full sm:w-auto">
-                <select class="p-2 border rounded w-full sm:w-auto">
-                    <option value="all">All Diet Types</option>
-                    <option value="vegan">Vegan</option>
-                    <option value="keto">Keto</option>
-                    <!-- Add more options -->
-                </select>
-            </div>
-        </section>
+            <input
+                id="loginPassword"
+                type="password"
+                placeholder="Password"
+                class="p-2 border rounded w-full mb-3"
+            >
 
-        <section class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4">API Data Interaction</h2>
-            <div class="flex flex-wrap gap-4">
-                <button class="bg-blue-600 text-white py-2 px-4 rounded">Get Nutritional Insights</button>
-                <button class="bg-green-600 text-white py-2 px-4 rounded">Get Recipes</button>
-                <button class="bg-purple-600 text-white py-2 px-4 rounded">Get Clusters</button>
-            </div>
-        </section>
+            <button
+                id="loginButton"
+                class="bg-blue-600 text-white py-2 px-4 rounded w-full mb-3"
+            >
+                Login
+            </button>
 
-        <section>
-            <h2 class="text-2xl font-semibold mb-4">Pagination</h2>
-            <div class="flex justify-center gap-2 mt-4">
-                <button class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Previous</button>
-                <button class="px-3 py-1 bg-blue-600 text-white rounded">1</button>
-                <button class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">2</button>
-                <button class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Next</button>
-            </div>
-        </section>
+            <button
+                id="googleLoginButton"
+                class="bg-gray-800 text-white py-2 px-4 rounded w-full mb-4"
+            >
+                Continue with Google
+            </button>
+
+            <p
+                id="authMessage"
+                class="text-center text-sm mb-4"
+            ></p>
+
+            <p class="text-center text-sm">
+                Don't have an account?
+                <a href="register.html" class="text-blue-600 font-semibold">
+                    Register
+                </a>
+            </p>
+
+        </div>
+
     </main>
 
-    <footer class="bg-blue-600 p-4 text-white text-center mt-10">
-        <p>&copy; 2025 Nutritional Insights. All Rights Reserved.</p>
-    </footer>
+    <script src="supabase.js"></script>
+
+    <script>
+
+        const authMessage = document.getElementById("authMessage");
+
+        // Already logged in? Go straight to the dashboard.
+        async function checkExistingSession() {
+            const { data } =
+                await supabaseClient.auth.getSession();
+
+            if (data.session) {
+                window.location.href = "dashboard.html";
+            }
+        }
+
+        // Email/password login
+        document
+            .getElementById("loginButton")
+            .addEventListener("click", async () => {
+
+                const email =
+                    document
+                        .getElementById("loginEmail")
+                        .value
+                        .trim();
+
+                const password =
+                    document
+                        .getElementById("loginPassword")
+                        .value;
+
+                if (!email || !password) {
+                    authMessage.textContent =
+                        "Please enter your email and password.";
+
+                    authMessage.className =
+                        "text-center text-sm mb-4 text-red-600";
+
+                    return;
+                }
+
+                const { error } =
+                    await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+                if (error) {
+                    authMessage.textContent =
+                        error.message;
+
+                    authMessage.className =
+                        "text-center text-sm mb-4 text-red-600";
+
+                    return;
+                }
+
+                // Successful login
+                window.location.href = "/frontend/dashboard.html";
+            });
+
+        // Google OAuth login
+        document
+            .getElementById("googleLoginButton")
+            .addEventListener("click", async () => {
+
+                const { error } =
+                    await supabaseClient.auth.signInWithOAuth({
+                        provider: "google",
+                        options: {
+                            redirectTo: window.location.origin + "/frontend/dashboard.html"
+                        }
+                    });
+
+                if (error) {
+                    authMessage.textContent =
+                        "Google login failed: " + error.message;
+
+                    authMessage.className =
+                        "text-center text-sm mb-4 text-red-600";
+                }
+            });
+
+        checkExistingSession();
+
+    </script>
 
 </body>
 </html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Nutritional Insights</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css"
+        rel="stylesheet"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+    <header class="bg-blue-600 p-4 text-white">
+        <h1 class="text-3xl font-semibold">Nutritional Insights</h1>
+    </header>
+
+    <main class="flex items-center justify-center px-4 py-16">
+
+        <div class="w-full max-w-md bg-white p-6 shadow-lg rounded-lg">
+
+            <h2 class="text-2xl font-semibold text-center mb-6">
+                Create Account
+            </h2>
+
+            <input
+                id="registerName"
+                type="text"
+                placeholder="Full Name"
+                class="p-2 border rounded w-full mb-3"
+            >
+
+            <input
+                id="registerEmail"
+                type="email"
+                placeholder="Email"
+                class="p-2 border rounded w-full mb-3"
+            >
+
+            <input
+                id="registerPassword"
+                type="password"
+                placeholder="Password"
+                class="p-2 border rounded w-full mb-3"
+            >
+
+            <input
+                id="confirmPassword"
+                type="password"
+                placeholder="Confirm Password"
+                class="p-2 border rounded w-full mb-3"
+            >
+
+            <button
+                id="registerButton"
+                class="bg-green-600 text-white py-2 px-4 rounded w-full mb-4"
+            >
+                Register
+            </button>
+
+            <p
+                id="authMessage"
+                class="text-center text-sm mb-4"
+            ></p>
+
+            <p class="text-center text-sm">
+                Already have an account?
+                <a href="index.html" class="text-blue-600 font-semibold">
+                    Login
+                </a>
+            </p>
+
+        </div>
+
+    </main>
+
+    <script src="supabase.js"></script>
+
+    <script>
+
+        const authMessage = document.getElementById("authMessage");
+
+        function showError(message) {
+            authMessage.textContent = message;
+            authMessage.className =
+                "text-center text-sm mb-4 text-red-600";
+        }
+
+        document
+            .getElementById("registerButton")
+            .addEventListener("click", async () => {
+
+                const fullName =
+                    document.getElementById("registerName").value.trim();
+
+                const email =
+                    document.getElementById("registerEmail").value.trim();
+
+                const password =
+                    document.getElementById("registerPassword").value;
+
+                const confirmPassword =
+                    document.getElementById("confirmPassword").value;
+
+                if (!fullName || !email || !password || !confirmPassword) {
+                    showError("Please fill in all fields.");
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    showError("Passwords do not match.");
+                    return;
+                }
+
+                if (password.length < 6) {
+                    showError("Password must be at least 6 characters.");
+                    return;
+                }
+
+                const { error } =
+                    await supabaseClient.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: {
+                                full_name: fullName
+                            }
+                        }
+                    });
+
+                if (error) {
+                    showError(error.message);
+                    return;
+                }
+
+                authMessage.textContent =
+                    "Registration successful! Check your email to confirm your account, then log in.";
+
+                authMessage.className =
+                    "text-center text-sm mb-4 text-green-600";
+
+                document.getElementById("registerName").value = "";
+                document.getElementById("registerEmail").value = "";
+                document.getElementById("registerPassword").value = "";
+                document.getElementById("confirmPassword").value = "";
+            });
+
+    </script>
+
+</body>
+</html>
