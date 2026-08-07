@@ -1,0 +1,16 @@
+{
+  "routes": [
+    {
+      "route": "/*",
+      "serve": "/frontend/index.html",
+      "statusCode": 200
+    },
+    {
+      "route": "/api/*",
+      "serve": "/.auth/me"
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "/frontend/index.html"
+  }
+}
